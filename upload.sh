@@ -1,6 +1,6 @@
 cd ~/Documents/Modev/main
 
+git add -A
+git commit -m "Update Modev from Xerver"
 git pull --rebase origin main
-git add .
-git commit -m "Update Modev"
 git push origin main
