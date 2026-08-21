@@ -1,0 +1,26 @@
+Backed up
+	GfxCommand
+	GfxSelect
+	GfxClock
+	GfxWrite
+	GfxRead
+	GfxData0
+	GfxData1
+	GfxData2
+	GfxData3
+
+
+GfxProtocolHardSPI
+	GfxCommand
+	GfxSelect
+	GfxClock
+	GfxWrite
+	GfxRead
+
+GfxProtocolE32QSPI
+	GfxSelect
+	GfxClock
+	GfxData0
+	GfxData1
+	GfxData2
+	GfxData3

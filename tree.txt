@@ -1,0 +1,102 @@
+Modev Function Tree
+v0.0.0
+Indent 4
+
+Function identifier		Return		Name
+
+[a0]					bool		sys.getBootInput()
+[aa0]					uint32		sys.getScriptSize()
+[aa1]					bool		sys.isProto()
+[aa2]					bool		sys.isEmu()
+[aaa0]					uint32		sys.getVerValue()
+[aaa1]					string		sys.getVerString()
+[aaa2]					string		sys.getVerName()
+[aab0]					uint32		sys.getDistVerValue()
+[aab1]					string		sys.getDistVerString()
+[aab2]					string		sys.getDistVerName()
+[aab3]					string		sys.getDistName()
+[ab0]					uint32		sys.getTime()
+[ab1]					uint32		sys.getBootTime()
+[ab2]					uint32		sys.getUnixTime()
+[ac0]					void		sys.log(string context, uint8 type=-1[max 4])
+[aca0]					bool		sys.getLogNewlineState()
+[aca1]					void		sys.setLogNewlineState(bool set)
+[acb0]					bool		sys.getLogLinenumState()
+[aca1]					void		sys.setLogLinenumState(bool set)
+
+
+
+
+[b0]					void		gfx.flush()
+[b1]					void		gfx.antiBurn()
+[b2]					uint32		gfx.getFps()
+[b3]					uint16		gfx.getBlend(uint16 color1=0, uint16 color2=0xFFFF, uint8 intensity=127)
+[ba0]					uint16		gfx.getWidth()
+[ba1]					uint16		gfx.getHeight()
+[ba2]					uint32		gfx.getSize()
+[bba0]					void		gfx.setBufClip(uint16 x, uint16 y, uint16 width, uint16 height)
+[bba1]					void		gfx.cancelBufClip()
+[bbb0]					void		gfx.setFlushClip(uint16 x, uint16 y, uint16 width, uint16 height)
+[bbb1]					void		gfx.cancelFlushClip()
+[bc0]					uint8		gfx.getBrightness()
+[bc1]					void		gfx.setBrightness(uint8 value)
+[bd0]					uint16		gfx.getRgb565()
+[bd1]					uint16		gfx.getRgb111()
+[bd2]					uint16		gfx.getRgb222()
+[be0]					uint16		gfx.getPixel(int32 x,int32 y)
+[be1]					void		gfx.setPixel(int32 x,int32 y,uint16 color)
+[bf0]					void		gfx.clear(uint16 color)
+[bf1]					void		gfx.clearQuick(uint16 color)
+[bf2]					void		gfx.clearDither(uint8 density[max 15],uint16 color)
+[bfa0]					void		gfx.clearGrad(uint16 color1,uint16 color2,uint8 angle)
+[bfa1]					void		gfx.clearGradVert(uint16 color1,uint16 color2)
+[bfa2]					void		gfx.clearGradHori(uint16 color1,uint16 color2)
+[bg0]					void		gfx.line(int32 x1,int32 y1,int32 x2,int32 y2,uint16 color)
+[bg1]					void		gfx.lineVert(uint16 color)
+[bg2]					void		gfx.lineHori(uint16 color)
+[bg3]					void		gfx.lineDash(uint16 color)
+[bg4]					void		gfx.lineEdge(uint16 color)
+[bh0]					void		gfx.rectFrame(uint16 color)
+[bh1]					void		gfx.rectSolid(uint16 color)
+[bh2]					void		gfx.rectDither(uint16 color)
+[bha0]					void		gfx.rectEmboss(uint16 color)
+[bha1]					void		gfx.rectProgress(uint16 color)
+[bha2]					void		gfx.rectLoading(uint16 color)
+[bhb0]					void		gfx.rectGrad(uint16 color)
+[bhb1]					void		gfx.rectGradVert(uint16 color)
+[bhb2]					void		gfx.rectGradHori(uint16 color)
+[bi0]					void		gfx.circFrame(uint16 color)
+[bi1]					void		gfx.circSolid(uint16 color)
+[bj0]					void		gfx.elipFrame(uint16 color)
+[bj1]					void		gfx.elipSolid(uint16 color)
+[bk0]					void		gfx.triFrame(uint16 color)
+[bk1]					void		gfx.triSolid(uint16 color)
+[bl0]	gfx.getFont
+[bl1]	gfx.setFont
+[bl2]	gfx.getFontIndex
+[bl3]	gfx.setFontIndex
+[bl4]	gfx.getFontCount
+[bla0]	gfx.getFontWidth
+[bla1]	gfx.getFontHeight
+[bla2]	gfx.getTextWidth
+[blb0]	gfx.glyph
+[blb1]	gfx.text
+[blm0]	gfx.renderImage
+[blm1]	gfx.setImageGraytone
+[blm2]	gfx.setImageRGBA
+[blm3]	gfx.setImageGA
+[blm4]	gfx.setImageCropPos
+[blm5]	gfx.setImageCropSize
+[blm6]	gfx.setImageData
+[blm7]	gfx.getImageWidth
+[blm8]	gfx.getImageHeight
+
+
+[c0]					bool		inp.isTouchSupported()
+[ca0]					bool		inp.isTouchActive()
+[ca1]					integer		inp.getTouchXPos()
+[ca2]					integer		inp.getTouchYPos()
+[caa0]					bool		inp.isTouchEnabled()
+[caa1]					void		inp.setTouchEnable(bool set)
+
+[zer0]					void		non.dummy()
