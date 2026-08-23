@@ -8,9 +8,84 @@ char boot[ScriptSize]PROGMEM=R"(
 	
 	bg=gfx.getRgb222(0,0,1)
 	vertical=dw<dh
-	function BOOT()
+	
+	angleY=0
+	angleX=0
+	
+	touchSupported=inp.isTouchSupported()
+	wasTouching=false
+	
+	function cube()
+		local cx = dw // 2
+		local cy = b + (dh - b) // 2
+		local size = math.min(dw,dh-b) * 1
+	
+		local ca = math.cos(angleY)
+		local sa = math.sin(angleY)
+	
+		local cb = math.cos(angleX)
+		local sb = math.sin(angleX)
+	
+		-- cube vertices
+		local v = {
+			{-1,-1,-1}, {1,-1,-1},
+			{1, 1,-1}, {-1, 1,-1},
+			{-1,-1, 1}, {1,-1, 1},
+			{1, 1, 1}, {-1, 1, 1}
+		}
+	
+		local p = {}
+	
+		for i=1,8 do
+			local x,y,z = v[i][1],v[i][2],v[i][3]
+	
+			-- rotate around Y
+			local x1 = x * ca - z * sa
+			local z1 = x * sa + z * ca
+	
+			-- rotate around X
+			local y1 = y * cb - z1 * sb
+			local z2 = y * sb + z1 * cb
+	
+			-- perspective projection
+			local distance = 4
+			local depth = distance + z2
+			local scale = size / depth
+	
+			p[i] = {
+				cx + x1 * scale,
+				cy + y1 * scale
+			}
+		end
+	
+		local edges = {
+			{1,2},{2,3},{3,4},{4,1},
+			{5,6},{6,7},{7,8},{8,5},
+			{1,5},{2,6},{3,7},{4,8}
+		}
+	
+		for i=1,#edges do
+			local a = p[edges[i][1]]
+			local c = p[edges[i][2]]
+	
+			gfx.line(
+				math.floor(a[1]),
+				math.floor(a[2]),
+				math.floor(c[1]),
+				math.floor(c[2]),
+				0xFFFF
+			)
+		end
+	
+		-- Only automatically rotate when touchscreen isn't being used
+		if not (touchSupported and inp.isTouchActive()) then
+			angleY = angleY + 0.035
+			angleX = angleX + 0.0245
+		end
+	end
+	
+	function fpsMeter()
 		fps=gfx.getFps()
-		fpsc=60
 	
 		fh=gfx.getFontHeight()
 		lh=12
@@ -48,166 +123,42 @@ char boot[ScriptSize]PROGMEM=R"(
 			end
 			if i%10==0 then l=lh end
 			if not(x<0 or x>dw) then
-				gfx.lineVert(x//1,fh,l,co)
+				gfx.lineVert(x,fh,l,co)
 			end
 		end
 		gfx.flush()
+		return b
+	end
 	
+	function BOOT()
+		gfx.flush()
+		b=fpsMeter()
 		gfx.setFlushClip(0,b,dw,dh-b)
-			gfx.clear(100)
-			-- rotating reflective cube benchmark
+		gfx.clear(100)
 	
-			cubeAngle=cubeAngle or 0
-			cubeAngle=cubeAngle+0.035
-			
-			cx=dw/2
-			cy=b+((dh-b)/2)
-			
-			size=math.min(dw,dh-b)*0.32
-			
-			-- RGB565 helpers
-			function rgb565(r,g,bl)
-				return ((r>>3)<<11)|((g>>2)<<5)|(bl>>3)
-			end
-			
-			function unpack565(c)
-				return (c>>11)&31,(c>>5)&63,c&31
-			end
-			
-			function shade565(c,s)
-				local r,g,bl=unpack565(c)
-				r=math.floor(r*s)
-				g=math.floor(g*s)
-				bl=math.floor(bl*s)
-				return (r<<11)|(g<<5)|bl
-			end
-			
-			-- 3D rotation
-			function rot(x,y,z)
-				local cy=math.cos(cubeAngle)
-				local sy=math.sin(cubeAngle)
-				local cxr=math.cos(cubeAngle*0.73)
-				local sxr=math.sin(cubeAngle*0.73)
-			
-				-- Y rotation
-				local xx=x*cy-z*sy
-				local zz=x*sy+z*cy
-			
-				-- X rotation
-				local yy=y*cxr-zz*sxr
-				zz=y*sxr+zz*cxr
-			
-				return xx,yy,zz
-			end
-			
-			-- Perspective projection
-			function project(x,y,z)
-				local d=4.0
-				local p=d/(d-z)
-			
-				return cx+x*size*p,
-					cy+y*size*p,
-					z
-			end
-			
-			-- Cube vertices
-			verts={
-				{-1,-1,-1},
-				{ 1,-1,-1},
-				{ 1, 1,-1},
-				{-1, 1,-1},
-				{-1,-1, 1},
-				{ 1,-1, 1},
-				{ 1, 1, 1},
-				{-1, 1, 1}
-			}
-			
-			pv={}
-			
-			for i=1,8 do
-				local x,y,z=rot(verts[i][1],verts[i][2],verts[i][3])
-				local sx,sy,sz=project(x,y,z)
-				pv[i]={sx,sy,sz}
-			end
-			
-			-- Triangle rasterizer
-			function triangle(v1,v2,v3,baseColor)
-				local minx=math.floor(math.min(v1[1],v2[1],v3[1]))
-				local maxx=math.floor(math.max(v1[1],v2[1],v3[1]))
-				local miny=math.floor(math.min(v1[2],v2[2],v3[2]))
-				local maxy=math.floor(math.max(v1[2],v2[2],v3[2]))
-			
-				if minx<0 then minx=0 end
-				if maxx>=dw then maxx=dw-1 end
-				if miny<b then miny=b end
-				if maxy>=dh then maxy=dh-1 end
-			
-				local ax,ay=v1[1],v1[2]
-				local bx,by=v2[1],v2[2]
-				local cx2,cy2=v3[1],v3[2]
-			
-				local den=(by-cy2)*(ax-cx2)+(cx2-bx)*(ay-cy2)
-				if den==0 then return end
-			
-				for y=miny,maxy do
-					for x=minx,maxx do
-						local w1=((by-cy2)*(x-cx2)+(cx2-bx)*(y-cy2))/den
-						local w2=((cy2-ay)*(x-cx2)+(ax-cx2)*(y-cy2))/den
-						local w3=1-w1-w2
-			
-						if w1>=0 and w2>=0 and w3>=0 then
-							local rx=math.floor(cx-(x-cx)*0.35)
-							local ry=math.floor(cy-(y-cy)*0.35)
-			
-							local reflected
-			
-							if rx>=0 and rx<dw and ry>=b and ry<dh then
-								reflected=gfx.getPixel(rx,ry)
-							else
-								reflected=baseColor
-							end
-			
-							local r1,g1,b1=unpack565(reflected)
-							local r2,g2,b2=unpack565(baseColor)
-			
-							local r=math.floor(r1*0.55+r2*0.45)
-							local g=math.floor(g1*0.55+g2*0.45)
-							local bl=math.floor(b1*0.55+b2*0.45)
-			
-							local spec=math.sin(x*0.035+y*0.021+cubeAngle*5)
-			
-							if spec>0.82 then
-								local k=(spec-0.82)/0.18
-								r=math.min(31,r+math.floor(k*18))
-								g=math.min(63,g+math.floor(k*28))
-								bl=math.min(31,bl+math.floor(k*18))
-							end
-			
-							gfx.setPixel(x,y,(r<<11)|(g<<5)|bl)
-						end
-					end
-				end
-			end
-			
-			-- Faces.
-			-- Back faces are intentionally rendered first.
-			triangle(pv[1],pv[2],pv[3],0x39E7)
-			triangle(pv[1],pv[3],pv[4],0x39E7)
-			
-			triangle(pv[5],pv[8],pv[7],0x7BEF)
-			triangle(pv[5],pv[7],pv[6],0x7BEF)
-			
-			triangle(pv[1],pv[5],pv[6],0x4210)
-			triangle(pv[1],pv[6],pv[2],0x4210)
-			
-			triangle(pv[2],pv[6],pv[7],0x6318)
-			triangle(pv[2],pv[7],pv[3],0x6318)
-			
-			triangle(pv[3],pv[7],pv[8],0x5294)
-			triangle(pv[3],pv[8],pv[4],0x5294)
-			
-			triangle(pv[4],pv[8],pv[5],0x2945)
-			triangle(pv[4],pv[5],pv[1],0x2945)	gfx.flush()
+		-- Touch controls rotation
+		if touchSupported and inp.isTouchActive() then
+			local tx=-inp.getTouchXPos()
+			local ty=inp.getTouchYPos()
+	
+			-- Map screen position to rotation angles
+			angleY=(tx/dw)*math.pi*2
+			angleX=(ty/dh)*math.pi*2
+		end
+	
+		cube()
+	
+		local colors = {
+			{4,0,0}, {4,1,0}, {4,2,0}, {4,3,0}, {4,4,0},
+			{3,4,0}, {2,4,0}, {1,4,0}, {0,4,0},
+			{0,4,1}, {0,4,2}, {0,4,3}, {0,4,4},
+			{0,3,4}, {0,2,4}, {0,1,4}, {0,0,4}
+		}
+		
+		for i, c in ipairs(colors) do
+			gfx.rectSolid((i-1)*2,b,2,10,gfx.getRgb222(c[1],c[2],c[3]))
+		end
+		gfx.flush()
 	end
 )";
 char erno[1024];

@@ -2,7 +2,7 @@
 #pragma once
 
 #define DevDefineVersion	2
-#define DevDefineEsp32
+#define DevDefineEsp32s3
 #define SysBootInput	0
 #define SysDebugLight	14
 

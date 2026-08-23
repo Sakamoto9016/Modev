@@ -17,13 +17,15 @@
 
 
 #define GfxSupported
-#include"display/ST7735S_160x80.h"
-#define GfxSelect		B4reP4
-#define GfxCommand		B4reP3
+#include"display/ST7789_240x240.h"
+#define GfxHasIps		true
+
 #define GfxClock		B4reP0
 #define GfxWrite		B4reP1
 #define GfxReset		B4reP2
-#define GfxBacklight	B4reP5
+#define GfxCommand		B4reP3
+//#define GfxSelect		B4reP4
+#define GfxBacklight	B4reP4
 
 
 // #define RGBSupported

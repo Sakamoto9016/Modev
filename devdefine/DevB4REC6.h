@@ -2,7 +2,7 @@
 #pragma once
 
 #define DevDefineVersion	2
-#define DevDefineEsp32
+#define DevDefineEsp32c6
 #define SysBootInput	9
 #define SysDebugLight	5
 
@@ -18,29 +18,15 @@
 
 #define GfxSupported
 #include"display/ST7735S_160x80.h"
-#define GfxSelect		B4reP4
-#define GfxCommand		B4reP3
+#define GfxHasIps		true
+#define GfxColorInvert
+
 #define GfxClock		B4reP0
 #define GfxWrite		B4reP1
 #define GfxReset		B4reP2
+#define GfxCommand		B4reP3
+#define GfxSelect		B4reP4
 #define GfxBacklight	B4reP5
-
-
-// #define GfxSupported
-// #define GfxProtocolHardSPI
-// #define GfxModuleST7735
-// #define GfxModuleVariant2
-
-// #define GfxSelect		4
-// #define GfxCommand		6
-// #define GfxClock		14
-// #define GfxWrite		18
-// #define GfxReset		7
-// #define GfxBacklight	5
-
-// #define GfxWidth		128
-// #define GfxHeight		160
-// #define GfxSpeed		80000000UL
 
 
 // #define RGBSupported

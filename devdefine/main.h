@@ -1,20 +1,27 @@
 #if defined(ARDUINO)
-	/*Stable*/
-		//#include"DevES3C28P.h"
-
+	/*Breadboard device*/
 		//#include"DevB4RES3.h"
-		#include"DevB4REC3.h"
+		//#include"DevB4REC3.h"
 		//#include"DevB4REC6.h"
 
+	/*Premade device*/
+		/*Has a color issue*/
+			#include"DevES3C28P.h"
+
+		/*Has a display issue*/
+			//#include"DevJC4827W543.h"
+		
 		//#include"DevES3C19P.h"
 
-	/*Unstable*/
-		//#include"DevJC4827W543.h"
+
+
+
+
+
 
 	/*Custom*/
 		//#include"DevTEMPL.h"
 
-	/*Backup*/
 		#include"DevB4CKUP.h"
 #else
 	#define DevDefineVersion	1

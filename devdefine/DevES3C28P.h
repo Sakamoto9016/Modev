@@ -1,8 +1,8 @@
 /*/t indent 4*/
 #pragma once
 
-#define DevDefineVersion	2
-#define DevDefineEsp32
+#define DevDefineVersion	3
+#define DevDefineEsp32s3
 #define SysBootInput	0
 #define SysDebugLight	45
 
@@ -11,10 +11,8 @@
 
 
 #define GfxSupported
-#define	GfxProtocolHardSPI
-#define GfxModuleILI9341
-
-#define GfxColorInvert
+#include"display/ILI9341_240x320.h"
+#define GfxHasIps		true
 
 #define GfxSelect		10
 #define GfxCommand		46
@@ -22,10 +20,6 @@
 #define GfxWrite		11
 #define GfxRead			13
 #define GfxBacklight	45
-
-#define GfxWidth		240
-#define GfxHeight		320
-#define GfxSpeed		60000000UL
 
 
 #define I2cSupported

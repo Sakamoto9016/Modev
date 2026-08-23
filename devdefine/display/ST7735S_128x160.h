@@ -9,11 +9,8 @@ Requirements:
 */
 #define GfxProtocolHardSPI
 #define GfxModuleST7735
-#define GfxModuleVariant1
+#define GfxModuleVariant2
 
-#define GfxShiftX		24
-#define GfxRotate		3
-
-#define GfxWidth		160
-#define GfxHeight		80
+#define GfxWidth		128
+#define GfxHeight		160
 #define GfxSpeed		80000000UL
