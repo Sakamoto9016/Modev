@@ -1,10 +1,10 @@
 /*/t indent 4*/
 #pragma once
 
-#define DevDefineVersion	2
-#define DevDefineEsp32c6
-#define SysBootInput	9
-#define SysDebugLight	5
+#define dd_Version			5
+#define dd_DeviceEsp32c6
+#define dd_BootInput		9
+#define dd_DebugLight		5
 
 
 #define FormatB4RE

@@ -1,3 +1,5 @@
+!! Modev is actively under construction, the first release is sceduled on 1/1/2027
+
 # **Mo**dev <span style="font-size: 1rem;">v0.0.x</span>
 
 ## Introduction
@@ -9,7 +11,7 @@ With Modev Emulation, you can program and see it for yourself with ease.
 
 The only requirements are just your laptop, your SoC device and your basic knowledge about lua.
 
-To learn more about Modev API, visit [here](function/main.md).
+To learn more about Modev API, visit [here](docs/function/main.md).
 
 ---
 Click [here](#introduction) to be taken to the top of the page.

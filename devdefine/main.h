@@ -1,34 +1,28 @@
+/*
+_p	pin
+_o	option
+_v	variable
+*/
 #if defined(ARDUINO)
 	/*Prototype device*/
-		#include"DevB4RES3.h"
-		//#include"DevB4REC3.h"
-		//#include"DevB4REC6.h"
-		/*Under development*/
-			//#include"DevB4RE82.h"
+		#include"device/b4reEsp32C6.h"
+//		#include"device/b4reEsp32C3.h"
+//		#include"device/b4reEsp32S3.h"
+	/*Under development*/
+//		#include"device/b4reEsp8266.h"
 
 	/*Premade device*/
 		/*Has a color issue*/
-			//#include"DevES3C28P.h"
+//			#include"device/es3c28p.h"
 
 		/*Has a display issue*/
-			//#include"DevJC4827W543.h"
+//			#include"device/jc4827w543.h"
 		
-		//#include"DevES3C19P.h"
-
-
-
-	/*Custom*/
-		//#include"DevTEMPL.h"
-
-	#include"DevB4CKUP.h"
+//		#include"device/es3c19p.h"
+	#include"display/default.h"
 #else
 	#define dd_Version		1
-	#define dd_GfxWidth		160
-	#define dd_GfxHeight	80
-	#define dd_GfxScale		1
-#endif
-
-#define dd_VerTarget		10
-#if defined(dd_Version)&&(dd_Version<dd_VerTarget)
-	#warning"PP: Outdated DevDefine is fine, but consider updating the device header file if it has any issues."
+	#define ddgfx_vWidth	160
+	#define ddgfx_vHeight	80
+	#define ddgfx_vScale	1
 #endif

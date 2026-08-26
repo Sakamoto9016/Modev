@@ -17,24 +17,23 @@ Ugh I'm still figuring this out
 
 #pragma once
 
-#define dd_Version	2
+#define dd_Version			5
 #define dd_DeviceEsp8266
-#define SysBootInput	0
-#define SysDebugLight	2
+#define dd_BootInput		0
+#define dd_DebugLight		2
 
 
-#define FormatB4RE
-#define B4reP0		4
-#define B4reP1		5
-#define B4reP2		12
-#define B4reP3		13
-#define B4reP4		15
-#define B4reP5		14
+#define dd_FormatB4RE
+#define ddb4_p0				4
+#define ddb4_p1				5
+#define ddb4_p2				12
+#define ddb4_p3				13
+#define ddb4_p4				15
+#define ddb4_p5				14
 
 
-#define GfxSupported
+#define dd_Graphics
 #include"display/ST7735S_128x160.h"
-
-#define GfxCommand		B4reP3
-#define GfxSelect		B4reP4
-#define GfxBacklight	B4reP5
+#define ddgfx_pCommand		ddb4_p3
+#define ddgfx_pSelect		ddb4_p4
+#define ddgfx_pBacklight	ddb4_p5

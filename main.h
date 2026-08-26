@@ -85,8 +85,8 @@ extern System sys;
 class Graphics{
 	public:
 		uint16_t
-			width=dd_GfxWidth,
-			height=dd_GfxHeight,
+			width=ddgfx_vWidth,
+			height=ddgfx_vHeight,
 			*buffer;
 		uint32_t
 			size=(uint32_t)width*height;

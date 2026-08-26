@@ -7,9 +7,10 @@ Requirements:
 #define GfxReset		gpio
 #define GfxBacklight	gpio
 */
-#define	GfxProtocolHardSPI
-#define GfxModuleILI9341
+#define ddgfx_Version		1
+#define	ddgfx_oIoHardSPI
+#define ddgfx_oDspILI9341
 
-#define GfxWidth		240
-#define GfxHeight		320
-#define GfxSpeed		60000000UL
+#define ddgfx_vWidth		240
+#define ddgfx_vHeight		320
+#define ddgfx_vSpeed		60000000UL
