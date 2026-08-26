@@ -1,8 +1,11 @@
 /*
 Psst...!
-This is the Home place, I have my todo placed here:
-
-
+Modev has proven that these microcontroller below works:
+	Espressif
+		Esp32
+			Esp32s3
+			Esp32c3
+			Esp32c6
 */
 #pragma once
 	#include<cstdint>
@@ -13,9 +16,8 @@ This is the Home place, I have my todo placed here:
 	#include<cstdlib>
 	#include<algorithm>
 	#include<cstddef>
-#define ScriptSize 1024*16
-
-extern char boot[ScriptSize];
+#include"mcfg.h"
+extern char boot[m_ScriptSize];
 extern bool err;
 extern char erno[1024];
 #include"devdefine/main.h"
@@ -64,19 +66,6 @@ struct font{
 
 class System{
 	public:
-		static const uint32_t
-			versionValue=0,
-			distroVersionValue=0;
-		static constexpr uint32_t scriptSize=ScriptSize;
-		static const bool
-			prototype=true,
-			emulation;
-		const char
-			*versionString="0.0.0",
-			*versionName="Succulent",
-			*distroName="",
-			*distroVersionString="",
-			*distroVersionName="";
 		time_t
 			bootTime=0,
 			elapTime=0,
@@ -95,16 +84,18 @@ extern System sys;
 
 class Graphics{
 	public:
-		void clip(uint16_t x,uint16_t y,uint16_t w,uint16_t h);
-		void clipView(uint16_t x,uint16_t y,uint16_t w,uint16_t h);	
-		void clip();
-		void clipView();	
 		uint16_t
-			width=GfxWidth,
-			height=GfxHeight,
+			width=dd_GfxWidth,
+			height=dd_GfxHeight,
 			*buffer;
 		uint32_t
 			size=(uint32_t)width*height;
+
+		void clip(uint16_t x,uint16_t y,uint16_t w,uint16_t h);
+		void clipView(uint16_t x,uint16_t y,uint16_t w,uint16_t h);	
+		void clip();
+		void clipView();
+
 		void begin();
 		void flush();
 		void antiBurn();
@@ -273,21 +264,21 @@ class Moon{
 	private:
 		class func{
 			public:
-				static int a0(lua_State*L){lua_pushboolean(L,sys.bootInput());return 1;}
-				static int aa0(lua_State*L){lua_pushinteger(L,sys.scriptSize);return 1;}
-				static int aa1(lua_State*L){lua_pushboolean(L,sys.prototype);return 1;}
-				static int aa2(lua_State*L){lua_pushboolean(L,sys.emulation);return 1;}
-				static int aaa0(lua_State*L){lua_pushinteger(L,sys.versionValue);return 1;}
-				static int aaa1(lua_State*L){lua_pushstring(L,sys.versionString);return 1;}
-				static int aaa2(lua_State*L){lua_pushstring(L,sys.versionName);return 1;}
-				static int aab0(lua_State*L){lua_pushinteger(L,sys.distroVersionValue);return 1;}
-				static int aab1(lua_State*L){lua_pushstring(L,sys.distroVersionString);return 1;}
-				static int aab2(lua_State*L){lua_pushstring(L,sys.distroVersionName);return 1;}
-				static int aab3(lua_State*L){lua_pushstring(L,sys.distroName);return 1;}
-				static int ab0(lua_State*L){lua_pushinteger(L,sys.elapTime);return 1;}
-				static int ab1(lua_State*L){lua_pushinteger(L,sys.bootTime);return 1;}
-				static int ab2(lua_State*L){lua_pushinteger(L,sys.unixTime);return 1;}
-				static int ac0(lua_State*L){
+				static int a0		(lua_State*L){lua_pushboolean(L,sys.bootInput());return 1;}
+				static int aa0		(lua_State*L){lua_pushinteger(L,m_ScriptSize);return 1;}
+				static int aa1		(lua_State*L){lua_pushboolean(L,m_UnderConstruction);return 1;}
+				static int aa2		(lua_State*L){lua_pushboolean(L,m_Emulation);return 1;}
+				static int aaa0		(lua_State*L){lua_pushinteger(L,m_VersionValue);return 1;}
+				static int aaa1		(lua_State*L){lua_pushstring (L,m_VersionString);return 1;}
+				static int aaa2		(lua_State*L){lua_pushstring (L,m_VersionName);return 1;}
+				static int aab0		(lua_State*L){lua_pushinteger(L,m_DistVerValue);return 1;}
+				static int aab1		(lua_State*L){lua_pushstring (L,m_DistVerString);return 1;}
+				static int aab2		(lua_State*L){lua_pushstring (L,m_DistVerName);return 1;}
+				static int aab3		(lua_State*L){lua_pushstring (L,m_DistroID);return 1;}
+				static int ab0		(lua_State*L){lua_pushinteger(L,sys.elapTime);return 1;}
+				static int ab1		(lua_State*L){lua_pushinteger(L,sys.bootTime);return 1;}
+				static int ab2		(lua_State*L){lua_pushinteger(L,sys.unixTime);return 1;}
+				static int ac0		(lua_State*L){
 					int level=luaL_optnumber(L,2,-1);
 					size_t len;
 					const char*str=luaL_tolstring(L,1,&len);

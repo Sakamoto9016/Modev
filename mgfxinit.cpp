@@ -14,18 +14,24 @@
 		if(!buffer)sys.lightCrash(1);
 	}
 	void Graphics::businit(){
-		#ifdef GfxProtocolHardSPI
-			bus=new Arduino_HWSPI(GfxCommand,GfxSelect,GfxClock,GfxWrite,GfxRead);
-		#elifdef GfxProtocolE32QSPI
-			bus=new Arduino_ESP32QSPI(GfxSelect,GfxClock,GfxData0,GfxData1,GfxData2,GfxData3);
+		#if defined(DevDefineEsp8266)
+			#if defined(GfxProtocolHardSPI)
+				bus=new Arduino_HWSPI(GfxCommand,GfxSelect);
+			#endif
+		#else
+			#if defined(GfxProtocolHardSPI)
+				bus=new Arduino_HWSPI(GfxCommand,GfxSelect,GfxClock,GfxWrite,GfxRead);
+			#elif defined(GfxProtocolE32QSPI)
+				bus=new Arduino_ESP32QSPI(GfxSelect,GfxClock,GfxData0,GfxData1,GfxData2,GfxData3);
+			#endif
 		#endif
 	}
 	void Graphics::dspinit(){
-		#ifdef GfxModuleILI9341
+		#if defined(GfxModuleILI9341)
 			gfxx=new Arduino_ILI9341(bus,GfxReset,0,GfxHasIps);
-		#elifdef GfxModuleNV3041A
+		#elif defined(GfxModuleNV3041A)
 			gfxx=new Arduino_NV3041A(bus,GfxReset,0,GfxHasIps);
-		#elifdef GfxModuleST7735
+		#elif defined(GfxModuleST7735)
 			#if defined(GfxModuleVariant1)
 				gfxx=new Arduino_ST7735(bus,GfxReset,0,GfxHasIps,
 					GfxWidth,GfxHeight,
@@ -47,7 +53,7 @@
 			#else
 				gfxx=new Arduino_ST7735(bus,GfxReset,0);
 			#endif
-		#elifdef GfxModuleST7789
+		#elif defined(GfxModuleST7789)
 			#if defined(GfxModuleVariant1)
 				gfxx=new Arduino_ST7789(
 					bus,GfxReset,0,GfxHasIps,

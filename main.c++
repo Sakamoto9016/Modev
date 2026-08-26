@@ -20,7 +20,7 @@ bool update(){
 	if(!fs::exists("boot.lua"))return false;
 	std::ifstream file("boot.lua",std::ios::binary);
 	if(!file)return false;
-	file.read(boot,ScriptSize-1);
+	file.read(boot,m_ScriptSize-1);
 	size_t len=file.gcount();
 	boot[len]='\0';
 	bootFileTime=fs::last_write_time("boot.lua");

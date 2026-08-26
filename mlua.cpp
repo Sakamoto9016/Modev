@@ -150,7 +150,7 @@ bool Moon::begin(char*err){
 		fnclib,syslib,gfxlib,nonlib,inplib
 	};
 	const char *libname[]={
-		"f","sys","gfx","non","inp"
+		"_","sys","gfx","non","inp"
 	};
 
 	constexpr uint8_t libcount=sizeof(libs)/sizeof(libs[0]);

@@ -51,9 +51,9 @@ Graphics gfx;
 
 		SDL_Init(SDL_INIT_VIDEO);
 		char buf[256];
-		sprintf(buf,"Modev %s(v%s) %s Emulation",sys.versionName,sys.versionString,sys.prototype?"Prototype":"");
+		sprintf(buf,"Modev %s(v%s) %s Emulation",m_VersionName,m_VersionString,m_UnderConstruction?"Prototype":"");
 		//window=SDL_CreateWindow(buf,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width*GfxScale,height*GfxScale,SDL_WINDOW_SHOWN);
-		window=SDL_CreateWindow(buf,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width*GfxScale,height*GfxScale,SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE);
+		window=SDL_CreateWindow(buf,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width*dd_GfxScale,height*dd_GfxScale,SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE);
 		renderer=SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
 		texture=SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGB565,SDL_TEXTUREACCESS_STREAMING,width,height);
 	}

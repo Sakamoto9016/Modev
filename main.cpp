@@ -1,8 +1,8 @@
 #include"main.h"
 #include"modevSplash.h"
 
-char boot[ScriptSize]PROGMEM=R"(
-	f.manifest={}
+char boot[m_ScriptSize]PROGMEM=R"(
+	_.manifest={}
 	dw=gfx.getWidth()
 	dh=gfx.getHeight()
 	
@@ -147,17 +147,6 @@ char boot[ScriptSize]PROGMEM=R"(
 		end
 	
 		cube()
-	
-		local colors = {
-			{4,0,0}, {4,1,0}, {4,2,0}, {4,3,0}, {4,4,0},
-			{3,4,0}, {2,4,0}, {1,4,0}, {0,4,0},
-			{0,4,1}, {0,4,2}, {0,4,3}, {0,4,4},
-			{0,3,4}, {0,2,4}, {0,1,4}, {0,0,4}
-		}
-		
-		for i, c in ipairs(colors) do
-			gfx.rectSolid((i-1)*2,b,2,10,gfx.getRgb222(c[1],c[2],c[3]))
-		end
 		gfx.flush()
 	end
 )";

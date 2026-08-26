@@ -9,34 +9,22 @@
 
 #ifdef ARDUINO
 	#if(SplashArea>=64&&SplashArea<96)
-		const uint8_t
-			splashData[]PROGMEM=_Splash64,
-			splashSize=63;
+		const uint8_t splashData[]PROGMEM=_Splash64,splashSize=63;
 	#elif(SplashArea>=96&&SplashArea<128)
-		const uint8_t
-			splashData[]PROGMEM=_Splash96,
-			splashSize=95;
+		const uint8_t splashData[]PROGMEM=_Splash96,splashSize=95;
 	#elif(SplashArea>=128&&SplashArea<192)
-		const uint8_t
-			splashData[]PROGMEM=_Splash128,
-			splashSize=127;
+		const uint8_t splashData[]PROGMEM=_Splash128,splashSize=127;
 	#elif(SplashArea>=192&&SplashArea<256)
-		const uint8_t
-			splashData[]PROGMEM=_Splash192,
-			splashSize=191;
+		const uint8_t splashData[]PROGMEM=_Splash192,splashSize=191;
 	#elif(SplashArea>=256)
-		const uint8_t
-			splashData[]PROGMEM=_Splash256,
-			splashSize=255;
+		const uint8_t splashData[]PROGMEM=_Splash256,splashSize=255;
 	#else
 		#define SplashBlock
 	#endif
 #else
 	const uint8_t
-		Splash64[]=_Splash64,
-		Splash96[]=_Splash96,
-		Splash128[]=_Splash128,
-		Splash192[]=_Splash192,
+		Splash64[]=_Splash64,Splash96[]=_Splash96,
+		Splash128[]=_Splash128,Splash192[]=_Splash192,
 		Splash256[]=_Splash256;
 	const uint8_t*splashData=Splash256;
 	uint8_t splashSize=255;
@@ -56,35 +44,29 @@ void splashDraw(){
 	#else
 		splashArea=(gfx.width>gfx.height)?gfx.height:gfx.width;
 		if(splashArea>=64&&splashArea<96){
-			splashData=Splash64;
-			splashSize=63;
+			splashData=Splash64;splashSize=63;
 		}else if(splashArea>=96&&splashArea<128){
-			splashData=Splash96;
-			splashSize=95;
+			splashData=Splash96;splashSize=95;
 		}else if(splashArea>=128&&splashArea<192){
-			splashData=Splash128;
-			splashSize=127;
+			splashData=Splash128;splashSize=127;
 		}else if(splashArea>=192&&splashArea<256){
-			splashData=Splash192;
-			splashSize=191;
+			splashData=Splash192;splashSize=191;
 		}
 		if(splashArea>=64){
 			uint16_t
 				x=(gfx.width-(splashSize+1))/2,
 				y=(gfx.height-(splashSize+1))/2;
-				gfx.setImageChannels(1,1,1,0);
-				gfx.setImageData(splashData,splashSize+1,splashSize+1);
-				gfx.renderImage(x,y);
+			gfx.setImageChannels(1,1,1,0);
+			gfx.setImageData(splashData,splashSize+1,splashSize+1);
+			gfx.renderImage(x,y);
 		}
 	#endif
 
 	uint16_t shift=0;
 	const uint8_t listlen=3;
-	char buf[16];
-	sprintf(buf,"v%s",sys.versionString);
 	const char
 		*fontlist[listlen]={"10x20","7x14b","5x8"},
-		*strlist[listlen]={"Modev",sys.versionName,buf};
+		*strlist[listlen]={"Modev",m_VersionName,m_VersionString};
 	for(int i=0;i<listlen;i++){
 		gfx.setFont(fontlist[i]);
 		gfx.text(strlist[i],4,4+shift,0xFFFF);

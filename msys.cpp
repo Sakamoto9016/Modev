@@ -2,7 +2,7 @@
 
 System sys;
 
-const char*markerInstruction=R"(
+constexpr char*markerInstruction=R"(
 Markers:
 (!-) Note
 (++) Started
@@ -13,8 +13,7 @@ Markers:
 //0~4
 uint16_t lineCount=0;
 
-#if defined(ARDUINO) 
-	const bool System::emulation=false;
+#ifdef ARDUINO
 	void System::lightCrash(uint8_t err){
 		/*So cfg area*/
 		const uint16_t
@@ -66,7 +65,6 @@ uint16_t lineCount=0;
 		return !digitalRead(SysBootInput);
 	}
 #else
-	const bool System::emulation=true;
 	void System::lightCrash(uint8_t err){
 		std::cout<<"POST-E:"<<err<<"\n";
 		while(true)delay(10);
@@ -86,7 +84,7 @@ uint16_t lineCount=0;
 		if(logNL)std::cout<<"\n";
 	}
 	bool System::bootInput(){
-		const Uint8*keys=SDL_GetKeyboardState(nullptr);
+		const uint8_t*keys=SDL_GetKeyboardState(nullptr);
 		return keys[SDL_SCANCODE_ESCAPE];
 	}
 #endif
@@ -98,10 +96,10 @@ void System::begin(){
 	#endif
 	logNL=false;
 	log("Modev ");
-	log(versionName);
-	if(prototype)log(" Prototype");
+	log(m_VersionName);
+	if(m_UnderConstruction)log(" Prototype");
 	log("\nVersion ");
-	log(versionString);
+	log(m_VersionString);
 	log("\n\nWelcome to Modev!\n");
 	log("Started log.\n");
 
