@@ -24,18 +24,18 @@ uint16_t lineCount=0;
 		/*Eo cfg area*/
 		while(true){
 			for(uint8_t i=0;i<4;i++){
-				#if defined(SysDebugLight)
+				#if defined(dd_DebugLight)
 					#if defined(GfxInvertedBacklight)
-						digitalWrite(SysDebugLight,false);
+						digitalWrite(dd_DebugLight,false);
 					#else
-						digitalWrite(SysDebugLight,true);
+						digitalWrite(dd_DebugLight,true);
 					#endif
 					bool bit=(err>>i)&1;
 					delay(bit?hi:lo);
 					#if defined(GfxInvertedBacklight)
-						digitalWrite(SysDebugLight,true);
+						digitalWrite(dd_DebugLight,true);
 					#else
-						digitalWrite(SysDebugLight,false);
+						digitalWrite(dd_DebugLight,false);
 					#endif
 				#endif
 				delay(be);
@@ -62,7 +62,7 @@ uint16_t lineCount=0;
 		if(logNL)Serial.print("\n");
 	}
 	bool System::bootInput(){
-		return !digitalRead(SysBootInput);
+		return !digitalRead(dd_BootInput);
 	}
 #else
 	void System::lightCrash(uint8_t err){

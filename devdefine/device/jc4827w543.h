@@ -1,32 +1,32 @@
 /*/t indent 4*/
 #pragma once
 
-#define DevDefineVersion	2
-#define DevDefineEsp32s3
-#define SysBootInput	0
-#define SysDebugLight	1
+#define dd_Version			5
+#define dd_DeviceEsp32s3
+#define dd_FamilyEsp32
+#define dd_BootInput		0
+#define dd_DebugLight		1
 
 
-#define PsramSupported
+#define dd_Psram
 
 
-#define GfxSupported
-#define GfxMethodE32QSPI
-#define GfxModuleNV3041A
+#define dd_Graphics
+#define ddgfx_oIoHardQSPI
+#define ddgfx_oDspNV3041A
+#define ddgfx_oIps
 
-#define GfxHasIps		true
+#define ddgfx_pSelect		45
+#define ddgfx_pClock		47
+#define ddgfx_pData0		21
+#define ddgfx_pData1		48
+#define ddgfx_pData2		40
+#define ddgfx_pData3		39
+#define ddgfx_pBacklight	1
 
-#define GfxSelect		45
-#define GfxClock		47
-#define GfxData0		21
-#define GfxData1		48
-#define GfxData2		40
-#define GfxData3		39
-#define GfxBacklight	1
-
-#define GfxWidth		480
-#define GfxHeight		272
-#define GfxSpeed		40000000UL
+#define ddgfx_vWidth		480
+#define ddgfx_vHeight		272
+#define ddgfx_vSpeed		40000000UL
 
 
 // #define SdSupported

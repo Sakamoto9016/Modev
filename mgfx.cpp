@@ -13,12 +13,12 @@ Graphics gfx;
 		dspinit();
 	}
 	void Graphics::setBrightness(uint8_t v){
-		#if defined(GfxBacklight)
+		#if defined(ddgfx_pBacklight)
 			brightValue=v;
-			#if defined(GfxBacklightSwap)
-				analogWrite(GfxBacklight,255-brightValue);
+			#if defined(ddgfx_oLightSwap)
+				analogWrite(ddgfx_pBacklight,255-brightValue);
 			#else
-				analogWrite(GfxBacklight,brightValue);
+				analogWrite(ddgfx_pBacklight,brightValue);
 			#endif
 		#endif
 	}
@@ -53,7 +53,7 @@ Graphics gfx;
 		char buf[256];
 		sprintf(buf,"Modev %s(v%s) %s Emulation",m_VersionName,m_VersionString,m_UnderConstruction?"Prototype":"");
 		//window=SDL_CreateWindow(buf,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width*GfxScale,height*GfxScale,SDL_WINDOW_SHOWN);
-		window=SDL_CreateWindow(buf,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width*dd_GfxScale,height*dd_GfxScale,SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE);
+		window=SDL_CreateWindow(buf,SDL_WINDOWPOS_CENTERED,SDL_WINDOWPOS_CENTERED,width*ddgfx_vScale,height*ddgfx_vScale,SDL_WINDOW_SHOWN|SDL_WINDOW_RESIZABLE);
 		renderer=SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED|SDL_RENDERER_PRESENTVSYNC);
 		texture=SDL_CreateTexture(renderer,SDL_PIXELFORMAT_RGB565,SDL_TEXTUREACCESS_STREAMING,width,height);
 	}

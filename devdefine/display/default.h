@@ -34,7 +34,7 @@
 #ifdef ddgfx_oIps
 	#undef ddgfx_oIps
 	#define ddgfx_oIps			true
-#ifndef ddgfx_oIps
+#else
 	#define ddgfx_oIps			false
 #endif
 #ifndef ddgfx_vRotate
@@ -49,6 +49,9 @@
 #ifndef ddgfx_vSpeed
 	#define ddgfx_vSpeed		40000000UL
 #endif
-#ifndef ddgfx_oSwap
+#ifdef ddgfx_oSwap
+	#undef ddgfx_oSwap
+	#define ddgfx_oSwap			true
+#else
 	#define ddgfx_oSwap			false
 #endif

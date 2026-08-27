@@ -19,6 +19,7 @@ Ugh I'm still figuring this out
 
 #define dd_Version			5
 #define dd_DeviceEsp8266
+#define dd_FamilyEsp82
 #define dd_BootInput		0
 #define dd_DebugLight		2
 

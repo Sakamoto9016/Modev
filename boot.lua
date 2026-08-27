@@ -1,4 +1,4 @@
-f.manifest={}
+_.manifest={}
 dw=gfx.getWidth()
 dh=gfx.getHeight()
 

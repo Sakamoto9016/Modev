@@ -1,39 +1,41 @@
 /*/t indent 4*/
 #pragma once
 
-#define DevDefineVersion	3
-#define DevDefineEsp32s3
-#define SysBootInput	0
-#define SysDebugLight	45
+#define dd_Version			5
+#define dd_DeviceEsp32s3
+#define dd_FamilyEsp32
+#define dd_BootInput		0
+#define dd_DebugLight		45
 
 
-#define PsramSupported
+#define dd_Psram
 
 
-#define GfxSupported
-#include"display/ILI9341_240x320.h"
-#define GfxHasIps		true
+#define dd_Graphics
+#include"../display/ILI9341_240x320.h"
+#define ddgfx_oIps
 
-#define GfxSelect		10
-#define GfxCommand		46
-#define GfxClock		12
-#define GfxWrite		11
-#define GfxRead			13
-#define GfxBacklight	45
+#define ddgfx_pSelect		10
+#define ddgfx_pCommand		46
+#define ddgfx_pClock		12
+#define ddgfx_pWrite		11
+#define ddgfx_pReset		13
+#define ddgfx_pBacklight	45
 
 
-#define I2cSupported
-#define I2cData			16
-#define I2cClock		15
-#define I2cFrequency	400000UL
+#define dd_I2c
+#define ddi2c_pData			16
+#define ddi2c_pClock		15
+#define ddi2c_vFrequency	400000UL
 
-#define TouchSupported
-#define TouchModuleFT6336G
-#define TouchAddress	0x38
-#define TouchData		I2cData
-#define TouchClock		I2cClock
-#define TouchReset		18
-#define TouchInterrupt	17
+
+#define dd_TouchPanel	//tpi means touch panel input
+#define ddtpi_oTpiFT6336G
+#define ddtpi_vAddress		0x38
+#define ddtpi_pData			ddi2c_pData
+#define ddtpi_pClock		ddi2c_pClock
+#define ddtpi_pReset		18
+#define ddtpi_pInterrupt	7
 
 
 // #define BatSupported

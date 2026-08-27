@@ -1,11 +1,11 @@
 #if defined(ARDUINO)
 	#include"main.h"
 	void Graphics::raminit(){
-		#if defined(GfxBacklight)
-			pinMode(GfxBacklight,OUTPUT);
+		#if defined(ddgfx_pBacklight)
+			pinMode(ddgfx_pBacklight,OUTPUT);
 		#endif
-		#if defined(PsramSupported)
-			#if defined(DevDefineEsp32s3)
+		#if defined(dd_Psram)
+			#if defined(dd_FamilyEsp32)
 				buffer=(uint16_t*)ps_malloc(width*height*sizeof(uint16_t));
 			#endif
 		#else
@@ -14,71 +14,81 @@
 		if(!buffer)sys.lightCrash(1);
 	}
 	void Graphics::businit(){
-		#if defined(DevDefineEsp8266)
-			#if defined(GfxProtocolHardSPI)
-				bus=new Arduino_HWSPI(GfxCommand,GfxSelect);
+		#if defined(dd_FamilyEsp82)
+			#if defined(ddgfx_oIoHardSPI)
+				bus=new Arduino_HWSPI(ddgfx_pCommand,ddgfx_pSelect);
+			#endif
+		#elif defined(dd_FamilyEsp32)
+			#if defined(ddgfx_oIoHardSPI)
+				bus=new Arduino_ESP32QSPI(
+					ddgfx_pSelect,ddgfx_pClock,
+					ddgfx_pData0,ddgfx_pData1,
+					ddgfx_pData2,ddgfx_pData3
+				);
 			#endif
 		#else
-			#if defined(GfxProtocolHardSPI)
-				bus=new Arduino_HWSPI(GfxCommand,GfxSelect,GfxClock,GfxWrite,GfxRead);
-			#elif defined(GfxProtocolE32QSPI)
-				bus=new Arduino_ESP32QSPI(GfxSelect,GfxClock,GfxData0,GfxData1,GfxData2,GfxData3);
+			#if defined(ddgfx_oIoHardSPI)
+				bus=new Arduino_HWSPI(
+					ddgfx_pCommand,ddgfx_pSelect,
+					ddgfx_pClock,ddgfx_pWrite,ddgfx_pRead
+				);
 			#endif
 		#endif
 	}
 	void Graphics::dspinit(){
-		#if defined(GfxModuleILI9341)
-			gfxx=new Arduino_ILI9341(bus,GfxReset,0,GfxHasIps);
-		#elif defined(GfxModuleNV3041A)
-			gfxx=new Arduino_NV3041A(bus,GfxReset,0,GfxHasIps);
-		#elif defined(GfxModuleST7735)
-			#if defined(GfxModuleVariant1)
-				gfxx=new Arduino_ST7735(bus,GfxReset,0,GfxHasIps,
-					GfxWidth,GfxHeight,
-					GfxShiftX,GfxShiftY
+		#if defined(ddgfx_oDspILI9341)
+			gfxx=new Arduino_ILI9341(bus,ddgfx_pReset,0,ddgfx_oIps);
+		#elif defined(ddgfx_oDspNV3041A)
+			gfxx=new Arduino_NV3041A(bus,ddgfx_pReset,0,ddgfx_oIps);
+		#elif defined(ddgfx_oDspST7735)
+			#if defined(ddgfx_oDspVar1)
+				gfxx=new Arduino_ST7735(bus,ddgfx_pReset,0,ddgfx_oIps,
+					ddgfx_vWidth,ddgfx_vHeight,
+					ddgfx_vShiftX,ddgfx_vShiftY
 				);
-			#elif defined(GfxModuleVariant2)
-				gfxx=new Arduino_ST7735(bus,GfxReset,0,GfxHasIps,
-					GfxWidth,GfxHeight,
-					GfxShiftX,GfxShiftY,
-					GfxShiftX,GfxShiftY,
-					GfxColorSwap
+			#elif defined(ddgfx_oDspVar2)
+				gfxx=new Arduino_ST7735(bus,ddgfx_pReset,0,ddgfx_oIps,
+					ddgfx_vWidth,ddgfx_vHeight,
+					ddgfx_vShiftX,ddgfx_vShiftY,
+					ddgfx_vShiftX,ddgfx_vShiftY,
+					ddgfx_oSwap
 				);
-			#elif defined(GfxModuleVariant3)
-				gfxx=new Arduino_ST7735(bus,GfxReset,0,GfxHasIps,
-					GfxWidth,GfxHeight,
-					GfxShiftX,GfxShiftY,
-					GfxShiftX,GfxShiftY
+			#elif defined(ddgfx_oDspVar3)
+				gfxx=new Arduino_ST7735(bus,
+					ddgfx_pReset,0,ddgfx_oIps,
+					ddgfx_vWidth,ddgfx_vHeight,
+					ddgfx_vShiftX,ddgfx_vShiftY,
+					ddgfx_vShiftX,ddgfx_vShiftY
 				);
 			#else
-				gfxx=new Arduino_ST7735(bus,GfxReset,0);
+				gfxx=new Arduino_ST7735(bus,ddgfx_pReset,0);
 			#endif
-		#elif defined(GfxModuleST7789)
-			#if defined(GfxModuleVariant1)
+		#elif defined(ddgfx_oDspST7789)
+			#if defined(ddgfx_oDspVar1)
 				gfxx=new Arduino_ST7789(
-					bus,GfxReset,0,GfxHasIps,
-					GfxWidth,GfxHeight,
-					GfxShiftX,GfxShiftY
+					bus,ddgfx_pReset,0,ddgfx_oIps,
+					ddgfx_vWidth,ddgfx_vHeight,
+					ddgfx_vShiftX,ddgfx_vShiftY
 				);
-			#elif defined(GfxModuleVariant2)
+			#elif defined(ddgfx_oDspVar2)
 				gfxx=new Arduino_ST7789(
-					bus,GfxReset,0,GfxHasIps,
-					GfxWidth,GfxHeight,
-					GfxShiftX,GfxShiftY,
-					GfxShiftX,GfxShiftY
+					bus,ddgfx_pReset,0,ddgfx_oIps,
+					ddgfx_vWidth,ddgfx_vHeight,
+					ddgfx_vShiftX,ddgfx_vShiftY,
+					ddgfx_vShiftX,ddgfx_vShiftY
 				);
 			#else
-				gfxx=new Arduino_ST7789(bus,GfxReset,0,GfxHasIps);
+				gfxx=new Arduino_ST7789(bus,ddgfx_pReset,0,ddgfx_oIps);
 			#endif
 		#endif
 
 		if(!gfxx)sys.lightCrash(3);
-		if(!gfxx->begin(GfxSpeed))sys.lightCrash(2);
-		#if defined(GfxColorInvert)
+		if(!gfxx->begin(ddgfx_vSpeed))sys.lightCrash(2);
+		#if defined(ddgfx_oInvert)
 			gfxx->invertDisplay(true);
 		#endif
-		#if defined(GfxRotate)
-			gfxx->setRotation(GfxRotate);
+		#if defined(ddgfx_vRotate)
+			gfxx->setRotation(ddgfx_vRotate);
 		#endif
 	}
 #endif

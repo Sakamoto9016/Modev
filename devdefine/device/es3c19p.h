@@ -1,34 +1,27 @@
 /*/t indent 4*/
 #pragma once
 
-#define DevDefineVersion	2
-#define DevDefineEsp32s3
-#define SysBootInput	0
-#define SysDebugLight	14
+#define dd_Version			5
+#define dd_DeviceEsp32s3
+#define dd_FamilyEsp32
+#define dd_BootInput		0
+#define dd_DebugLight		14
 
 
-#define PsramSupported
+#define dd_Psram
 
 
-#define GfxSupported
-#define GfxProtocolHardSPI
-#define GfxModuleST7789
-#define GfxModuleVariant2
+#define dd_Graphics
+#include"../display/ST7789_170x320.h"
+#define ddgfx_oLightSwap
+#define ddgfx_oInvert
 
-#define GfxBacklightSwap
-#define GfxColorInvert
-#define GfxShiftX		35
-
-#define GfxSelect		12
-#define GfxCommand		11
-#define GfxClock		10
-#define GfxWrite		13
-#define GfxReset		9
-#define GfxBacklight	14
-
-#define GfxWidth		170
-#define GfxHeight		320
-#define GfxSpeed		80000000UL
+#define ddgfx_pSelect		12
+#define ddgfx_pCommand		11
+#define ddgfx_pClock		10
+#define ddgfx_pWrite		13
+#define ddgfx_pReset		9
+#define ddgfx_pBacklight	14
 
 
 // #define I2cSupported
