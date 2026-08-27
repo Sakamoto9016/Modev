@@ -7,6 +7,8 @@ Modev has proven that these microcontroller below works:
 			Esp32c3
 			Esp32c6
 */
+#include"mcfg.h"
+#include"devdefine/main.h"
 #pragma once
 	#include<cstdint>
 	#include<cstdio>
@@ -16,11 +18,9 @@ Modev has proven that these microcontroller below works:
 	#include<cstdlib>
 	#include<algorithm>
 	#include<cstddef>
-#include"mcfg.h"
 extern char boot[m_ScriptSize];
 extern bool err;
 extern char erno[1024];
-#include"devdefine/main.h"
 #if defined(ARDUINO)
 	#include<Arduino_GFX_Library.h>
 	#include<Arduino.h>

@@ -4,32 +4,32 @@ Input inp;
 
 #if defined(ARDUINO)
 	bool Input::checkTouch(){
-		#ifdef TouchSupported
+		#ifdef dd_TouchPanel
 			return true;
 		#else
 			return false;
 		#endif
 	}
-	#ifdef TouchSupported
-		#ifdef TouchModuleCST816
-			CST816S tdsp(TouchData,TouchClock,TouchReset,TouchInterrupt);
-		#elifdef TouchModuleFT6336G
-			FT6336U tdsp(TouchData,TouchClock,TouchReset,TouchInterrupt);
+	#ifdef dd_TouchPanel
+		#ifdef ddtpi_oTpiCST816
+			CST816S tdsp(ddtpi_pData,ddtpi_pClock,ddtpi_pReset,ddtpi_pInterrupt);
+		#elifdef ddtpi_oTpiFT6336G
+			FT6336U tdsp(ddtpi_pData,ddtpi_pClock,ddtpi_pReset,ddtpi_pInterrupt);
 		#endif
 		void Input::begin(){
-			#ifdef TouchModuleCST816
+			#ifdef ddtpi_oTpiCST816
 				tdsp.begin(Wire,RISING);
-			#elifdef TouchModuleFT6336G
+			#elifdef ddtpi_oTpiFT6336G
 				tdsp.begin();
 			#endif
 		}
 		void Input::tick(){
 			if(touchEnable){
-				#ifdef TouchModuleCST816
+				#ifdef ddtpi_oTpiCST816
 					touchX=tdsp.data.x;
 					touchY=tdsp.data.y;
 					touchActive=tdsp.data.event!=0;
-				#elifdef TouchModuleFT6336G
+				#elifdef ddtpi_oTpiFT6336G
 					if(tdsp.read_td_status()){
 						touchX=tdsp.read_touch1_x();
 						touchY=tdsp.read_touch1_y();

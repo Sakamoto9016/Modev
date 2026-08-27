@@ -19,11 +19,16 @@
 				bus=new Arduino_HWSPI(ddgfx_pCommand,ddgfx_pSelect);
 			#endif
 		#elif defined(dd_FamilyEsp32)
-			#if defined(ddgfx_oIoHardSPI)
+			#if defined(ddgfx_oIoHardQSPI)
 				bus=new Arduino_ESP32QSPI(
 					ddgfx_pSelect,ddgfx_pClock,
 					ddgfx_pData0,ddgfx_pData1,
 					ddgfx_pData2,ddgfx_pData3
+				);
+			#elif defined(ddgfx_oIoHardSPI)
+				bus=new Arduino_HWSPI(
+					ddgfx_pCommand,ddgfx_pSelect,
+					ddgfx_pClock,ddgfx_pWrite,ddgfx_pRead
 				);
 			#endif
 		#else

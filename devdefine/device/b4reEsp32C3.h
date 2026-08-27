@@ -3,6 +3,7 @@
 
 #define dd_Version			5
 #define dd_DeviceEsp32c3
+#define dd_FamilyEsp32
 #define dd_BootInput		0
 #define dd_DebugLight		1
 

@@ -17,7 +17,7 @@
 
 
 #define dd_Graphics
-#include"display/ST7735S_160x80.h"
+#include"../display/ST7735S_160x80.h"
 #define ddgfx_oIps
 #define ddgfx_oInvert
 
