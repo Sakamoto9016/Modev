@@ -2,19 +2,33 @@
 
 System sys;
 
-constexpr char*markerInstruction=R"(
-Markers:
-(!-) Note
-(++) Started
-(--) Success
-(==) Failed
-(!!) Warning
+constexpr char*_header=R"(
+Hello, this is Mobile Development speaking!
+Brr brr, for more information, please seek https://github.com/Sakamoto9016/Modev
+
+  --== Log area ==--
+(!-)Note | (++)Started | (--)Success | (==)Failed | (!!)Warning
+Log is now active from here...
 )";
 //0~4
 uint16_t lineCount=0;
 
+char*spacer(char*out,const char*text,uint8_t size,bool left=false){
+	size_t len=strlen(text);
+	if(len>size)len=size;
+	memset(out,' ',size);
+	out[size]='\0';
+	if(left)memcpy(out,text,len);
+	else memcpy(out+(size-len),text,len);
+	return out;
+}
+
 #ifdef ARDUINO
 	void System::lightCrash(uint8_t err){
+		char buf[32];
+		sprintf(buf,"Lightcrash: %u!!",err);
+		log("FATAL.",4);
+		log(buf,3);
 		/*So cfg area*/
 		const uint16_t
 			hi=1000,	/*Dah*/
@@ -48,7 +62,7 @@ uint16_t lineCount=0;
 			char buf[6],out[8];
 			sprintf(buf,"%d",lineCount++);
 			Serial.print("[");
-			Serial.print(utl.spacer(out,buf,6));
+			Serial.print(spacer(out,buf,6));
 			Serial.print("]");
 		}
 		if(type>-1){
@@ -73,7 +87,7 @@ uint16_t lineCount=0;
 		if(logLC){
 			char buf[6],out[8];
 			sprintf(buf,"%d",lineCount++);
-			std::cout<<"["<<utl.spacer(out,buf,6)<<"]";
+			std::cout<<"["<<spacer(out,buf,6)<<"]";
 		}
 		if(type>-1){
 			const char*marker[5]={"!-","++","--","==","!!"};
@@ -100,11 +114,9 @@ void System::begin(){
 	if(m_UnderConstruction)log(" Prototype");
 	log("\nVersion ");
 	log(m_VersionString);
-	log("\n\nWelcome to Modev!\n");
-	log("Started log.\n");
-
+	log("\n");
 	logNL=true;
-	log(markerInstruction);
+	log(_header);
 	logLC=true;
-	//log("Welcome",2);
+	log("Initalized system.",2);
 }

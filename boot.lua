@@ -8,19 +8,16 @@ vertical=dw<dh
 angleY=0
 angleX=0
 
-touchSupported=inp.isTouchSupported()
 wasTouching=false
 
 function cube()
-	local cx = dw // 2
-	local cy = b + (dh - b) // 2
-	local size = math.min(dw,dh-b) * 1
-
-	local ca = math.cos(angleY)
-	local sa = math.sin(angleY)
-
-	local cb = math.cos(angleX)
-	local sb = math.sin(angleX)
+	local cx=dw/ 2
+	local cy=b+(dh-b)//2
+	local size=math.min(dw,dh-b)*1
+	local ca=math.cos(angleY)
+	local sa=math.sin(angleY)
+	local cb=math.cos(angleX)
+	local sb=math.sin(angleX)
 
 	-- cube vertices
 	local v = {
@@ -126,33 +123,61 @@ function fpsMeter()
 	return b
 end
 
+stage=0
+ppone=5
+snap=16
+iter=snap*8
+rend={}
+send={}
+startren=0
+getren=0
+startpush=0
+getpush=0
+starttime=0
+gettime=0
 function BOOT()
-	gfx.flush()
 	b=fpsMeter()
 	gfx.setFlushClip(0,b,dw,dh-b)
 	gfx.clear(100)
 
-	-- Touch controls rotation
-	if touchSupported and inp.isTouchActive() then
-		local tx=-inp.getTouchXPos()
-		local ty=inp.getTouchYPos()
+	if stage==0 then
+		local _a="Starting in "..(ppone-sys.getTime()//1000).."..."
+		gfx.text(_a,(dw-gfx.getTextWidth(_a))/2,(b+dh-gfx.getFontHeight())/2,0xFFFF)
+		if sys.getTime()//1000==ppone then stage=1 starttime=sys.getTime() end
+		gfx.flush()
+	elseif stage==1 then
+		startren=sys.getTime()
+		gfx.text(iter,0,b,0xFFFF)
+		cube()
+		getren=sys.getTime()-startren
 
-		-- Map screen position to rotation angles
-		angleY=(tx/dw)*math.pi*2
-		angleX=(ty/dh)*math.pi*2
+
+		startpush=sys.getTime()
+		gfx.flush()
+		getpush=sys.getTime()-startpush
+		if iter%snap==0 then
+			rend[#rend+1]=getren
+			send[#send+1]=getpush
+		end
+		iter=iter-1
+		if iter<=0 then
+			stage=2
+			gettime=sys.getTime()-starttime
+			getren=0
+			for i=1,#rend do
+				getren=getren+rend[i]
+			end
+			getren=getren/#rend
+			getpush=0
+			for i=1,#send do
+				getpush=getpush+send[i]
+			end
+			getpush=getpush/#send
+		end
+	else
+		local _a="Time: "..(gettime/1000).."s\nRend Avg: "..getren.."ms\nSend Avg: "..getpush.."ms"
+		gfx.text(_a,4,b+4,0xFFFF)
+		if sys.getTime()//1000==ppone then stage=1 end
+		gfx.flush()
 	end
-
-	cube()
-
-	local colors = {
-		{4,0,0}, {4,1,0}, {4,2,0}, {4,3,0}, {4,4,0},
-		{3,4,0}, {2,4,0}, {1,4,0}, {0,4,0},
-		{0,4,1}, {0,4,2}, {0,4,3}, {0,4,4},
-		{0,3,4}, {0,2,4}, {0,1,4}, {0,0,4}
-	}
-	
-	for i, c in ipairs(colors) do
-		gfx.rectSolid((i-1)*2,b,2,10,gfx.getRgb222(c[1],c[2],c[3]))
-	end
-	gfx.flush()
 end

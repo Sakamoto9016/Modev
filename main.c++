@@ -1,6 +1,6 @@
 /*
 Compile:
-	g++ lua/*.o *.cpp  main.c++ -lSDL2 -o modev -w
+	g++ obj/lua/*.o *.cpp  main.c++ -lSDL2 -o modev -w
 Execute:
 	./modev
 */

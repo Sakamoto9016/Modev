@@ -31,7 +31,7 @@
 	uint16_t splashArea=0;
 #endif
 void splashDraw(){
-	gfx.clear(0);
+	gfx.psColor(0).clear();
 	#ifdef ARDUINO
 		#ifndef SplashBlock
 			uint16_t

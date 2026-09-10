@@ -14,6 +14,8 @@
 #define m_VersionMinorValue	0
 #define m_VersionPatchValue	0
 #define m_VersionName		"Succulent"
+#define m_VersionCommit		"0ae0184"
+//git rev-parse --short HEAD
 
 //Distro properties
 	/*
@@ -25,6 +27,7 @@
 #define m_DistVerMinorValue	0
 #define m_DistVerPatchValue	0
 #define m_DistVerName		""
+#define m_DistVerCommit		""
 
 //General properties
 #define m_ScriptSize		1024*16

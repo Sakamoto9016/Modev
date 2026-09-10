@@ -42,18 +42,10 @@ extern char erno[1024];
 	void delay(uint32_t ms);
 	long random(long max);
 	long random(long min,long max);
-	#if defined(STUDIO)
-		void runtime();
-		extern uint width,height,scale;
-		extern uint32_t size;
-		extern uint16_t*buffer;
-	#endif
 #endif
 
-#if !defined(STUDIO)
 void setup();
 void loop();
-#endif
 
 struct font{
 	const char*name;
@@ -76,46 +68,229 @@ class System{
 		void log(const char* text="",int8_t type=-1);
 		void lightCrash(uint8_t err);
 		bool bootInput();
-		#if !defined(STUDIO)
 		void begin();
-		#endif
 };
 extern System sys;
 
 class Graphics{
+	private:
+		const uint8_t ditherMap[256]={
+			  0,128,32,160,  8,136, 40,168,  2,130, 34,162, 10,138, 42,170,
+			192, 64,224, 96,200, 72,232,104,194, 66,226, 98,202, 74,234,106,
+			 48,176, 16,144, 56,184, 24,152, 50,178, 18,146, 58,186, 26,154,
+			240,112,208, 80,248,120,216, 88,242,114,210, 82,250,122,218, 90,
+			 12,140, 44,172,  4,132, 36,164, 14,142, 46,174,  6,134, 38,166,
+			204, 76,236,108,196, 68,228,100,206, 78,238,110,198, 70,230,102,
+			 60,188, 28,156, 52,180, 20,148, 62,190, 30,158, 54,182, 22,150,
+			252,124,220, 92,244,116,212, 84,254,126,222, 94,246,118,214, 86,
+			  3,131, 35,163, 11,139, 43,171,  1,129, 33,161,  9,137, 41,169,
+			195, 67,227, 99,203, 75,235,107,193, 65,225, 97,201, 73,233,105,
+			 51,179, 19,147, 59,187, 27,155, 49,177, 17,145, 57,185, 25,153,
+			243,115,211, 83,251,123,219, 91,241,113,209, 81,249,121,217, 89,
+			 15,143, 47,175,  7,135, 39,167, 13,141, 45,173,  5,133, 37,165,
+			207, 79,239,111,199, 71,231,103,205, 77,237,109,197, 69,229,101,
+			 63,191, 31,159, 55,183, 23,151, 61,189, 29,157, 53,181, 21,149,
+			255,127,223, 95,247,119,215, 87,253,125,221, 93,245,117,213, 85
+		};
+		class _A{
+			friend class Graphics;
+			uint16_t
+				A=0,	/*Color A*/		B=0,	/*Color B*/
+				C=0,	/*Top shade*/	D=0,	/*Bottom shade*/
+				E=0,	/*Left shade*/	F=0,	/*Right shade*/
+				a=0;	/*Auto swap*/
+			uint8_t
+				type=0;
+				/*
+					0: Solid fill
+					1: Horizontal gradient fill
+					2: Vertical gradient fill
+				*/
+		}color;
+		class _B{
+			friend class Graphics;
+			uint8_t border=0,borderV=0;
+			bool safe=true;
+		}style;
+		class _C{
+			friend class Graphics;
+			uint8_t A=255;
+		}solid;
 	public:
-		uint16_t
-			width=ddgfx_vWidth,
-			height=ddgfx_vHeight,
-			*buffer;
-		uint32_t
-			size=(uint32_t)width*height;
+		uint16_t width=ddgfx_vWidth,height=ddgfx_vHeight,*buffer;
+		uint32_t size=(uint32_t)width*height;
+		/*Group of Logic Differentials*/
+			void begin();
+			void flush();
+			void setBrightness(uint8_t v=255);
+			void lowClear(uint16_t c=0);
+		/*Group of Inlines*/
+			/*Group of Utilities*/
+				inline uint32_t gFps()
+					{
+						static uint32_t a=0,frames=0,lastTime=millis();
+						frames++;
+						uint32_t now=millis();
+						if(now-lastTime>=1000){a=frames;frames=0;lastTime=now;}
+						return a;
+					}
+				inline uint16_t getBlend(uint16_t c1,uint16_t c2,uint8_t value=127){
+					uint16_t inv=255-value;
+					uint8_t
+						r1=(c1>>11)&0x1F,g1=(c1>>5)&0x3F,b1=c1&0x1F,
+						r2=(c2>>11)&0x1F,g2=(c2>>5)&0x3F,b2=c2&0x1F,
+						r=(r1*inv+r2*value)/255,
+						g=(g1*inv+g2*value)/255,
+						b=(b1*inv+b2*value)/255;
+					return(r<<11)|(g<<5)|b;
+				}
+				inline uint16_t getRgb565(uint8_t r=31,uint8_t g=63,uint8_t b=31){
+					r=std::min(r,(uint8_t)31);
+					g=std::min(g,(uint8_t)63);
+					b=std::min(b,(uint8_t)31);
+					return(r<<11)|(g<<5)|b;
+				}
+				inline uint16_t getRgb111(uint8_t r=1,uint8_t g=1,uint8_t b=1){
+					r=std::min(r,(uint8_t)1);
+					g=std::min(g,(uint8_t)1);
+					b=std::min(b,(uint8_t)1);
+					return((r*31+0)<<11)|((g*63+0)<<5)|(b*31+0);
+				}
+				inline uint16_t getRgb222(uint8_t r=3,uint8_t g=3,uint8_t b=3){
+					r=std::min(r,(uint8_t)3);
+					g=std::min(g,(uint8_t)3);
+					b=std::min(b,(uint8_t)3);
+					return(((r*31+1)/3)<<11)|(((g*63+1)/3)<<5)|((b*31+1)/3);
+				}
+				inline uint8_t gBrightness()
+					{return brightValue;}
+				inline void aAntiBurn()
+					{if(gBrightness()==0)lowClear(0);}	
+				inline uint8_t gColorRed(uint16_t c)
+					{return(c>>11)&0x1F;}
+				inline uint8_t gColorGreen(uint16_t c)
+					{return(c>>5)&0x3F;}
+				inline uint8_t gColorBlue(uint16_t c)
+					{return c&0x1F;}
+				inline uint16_t gGradient(uint16_t c0,uint16_t c1,uint16_t x,uint16_t width)
+					{
+						if(width<1)return c0;
+						uint8_t
+							r0=gColorRed(c0),g0=gColorGreen(c0),b0=gColorBlue(c0),
+							r1=gColorRed(c1),g1=gColorGreen(c1),b1=gColorBlue(c1);
+						int16_t
+							r=r0+((r1-r0)*x)/(width-1),
+							g=g0+((g1-g0)*x)/(width-1),
+							b=b0+((b1-b0)*x)/(width-1);
+						return(r<<11)|(g<<5)|b;
+					}
+				inline bool gDither(uint8_t intensity,uint8_t x,uint8_t y)
+					{
+						if(intensity==0)return false;
+						if(intensity==255)return true;
+						return intensity>ditherMap[((y&15)<<4)|(x&15)];
+					}
+//
 
-		void clip(uint16_t x,uint16_t y,uint16_t w,uint16_t h);
-		void clipView(uint16_t x,uint16_t y,uint16_t w,uint16_t h);	
-		void clip();
-		void clipView();
+			/*Group of Clip*/
+				inline void sClip(uint16_t x,uint16_t y,uint16_t w,uint16_t h,bool toBuffer)
+					{
+						if(toBuffer){clipX=x;clipY=y;clipW=w;clipH=h;clipEn=true;}
+						else{clipVX=x;clipVY=y;clipVW=w;clipVH=h;clipVEn=true;}
+					}
+				inline void xClip(bool toBuffer)
+					{if(toBuffer)clipEn=false;else clipVEn=false;}
+			/*Group of Color and Style*/
+				/*
+				apsgrx API system
+				a=action
+				p=passthrough/modular/stackable
+				s=set
+				g=get/check/probe
+				r=render
+				x=cancel/clear
+				*/
+				inline Graphics&psColor(uint16_t colorSolid,uint16_t colorGradient=0)
+					{
+						color.A=colorSolid;color.B=colorGradient;
+						color.type=0;
+						return*this;
+					}
+				inline Graphics&psBorderColorSingle(uint16_t colorSolid)
+					{
+						color.C=color.D=color.E=color.F=colorSolid;
+						style.borderV=0;
+						return*this;
+					}
+				inline Graphics&psBorderColorDuo(uint16_t colorLight,uint16_t colorDark)
+					{
+						color.C=color.E=colorLight;
+						color.D=color.F=colorDark;
+						style.borderV=1;
+						return*this;
+					}
+				inline Graphics&psBorderColorQuad(uint16_t colorTop,uint16_t colorBottom,uint16_t colorLeft,uint16_t colorRight)
+					{
+						color.C=colorTop;
+						color.D=colorBottom;
+						color.E=colorLeft;
+						color.F=colorRight;
+						style.borderV=2;
+						return*this;
+					}
+				inline Graphics&psColorGradientSwap(bool enable=true)
+					{if(enable){color.a=color.A;color.A=color.B;color.B=color.a;}return*this;}
+				inline Graphics&psBorderColorVerticalSwap(bool enable=true)
+					{if(enable){color.a=color.C;color.C=color.D;color.D=color.a;}return*this;}
+				inline Graphics&psBorderColorHorizontalSwap(bool enable=true)
+					{if(enable){color.a=color.E;color.E=color.F;color.F=color.a;}return*this;}
+				inline Graphics&psBorderColorSwap(bool enable=true)
+					{
+						if(enable){
+							color.a=color.C;color.C=color.D;color.D=color.a;
+							color.a=color.E;color.E=color.F;color.F=color.a;
+						}
+						return*this;
+					}
+				inline Graphics&psGradient(uint8_t angle)
+					{
+						angle%=4;
+						if(angle==1||angle==2){
+							color.a=color.A;
+							color.A=color.B;
+							color.B=color.a;
+							color.type=1;
+						}
+						color.type=(angle+1%2)+1;
+						return*this;
+					}
+				inline Graphics&psBorder(uint8_t thickness=0)
+					{style.border=thickness;return*this;}
+				inline Graphics&psDither(uint8_t density=255)
+					{solid.A=density;return*this;}
+				inline Graphics&psSafe(bool enable=true)
+					{style.safe=enable;return*this;}
+				inline Graphics&psClean()
+					{
+						style.border=0;
+						solid.A=255;
+						return*this;
+					}
+				inline Graphics&psTsHsNul2DWthUrPrb()
+					{return*this;}
+				//
+				void sPixel(int32_t x,int32_t y,uint16_t c=0);
+				uint16_t gPixel(int32_t x,int32_t y);
+				void sBuffer(int64_t p,uint16_t c=0);
+				uint16_t gBuffer(int64_t p);
 
-		void begin();
-		void flush();
-		void antiBurn();
-		uint32_t getFps();
-		uint16_t getRgb565(uint8_t r=31,uint8_t g=63,uint8_t b=31);
-		uint16_t getRgb111(uint8_t r=1,uint8_t g=1,uint8_t b=1);
-		uint16_t getRgb222(uint8_t r=3,uint8_t g=3,uint8_t b=3);
-		uint16_t getBlend(uint16_t c1,uint16_t c2,uint8_t value=127);
-		void setBrightness(uint8_t v=255);
-		uint8_t getBrightness();
+		void rClear();
+		void rRect(int32_t x,int32_t y,uint16_t w,uint16_t h);
+		void rProgress(int32_t x,int32_t y,uint16_t w,uint16_t h,uint8_t progress);
+		void rArray(int32_t x,int32_t y,uint8_t direction);
 
-		void clear(uint16_t c=0);
-		void clearQuick(uint16_t c=0);
-		void clearDither(uint8_t density=15,uint16_t c=0);
-		void clearGrad(uint16_t c1=0,uint16_t c2=0xFFFF,uint8_t angle=63);
-		void clearGradV(uint16_t c1=0,uint16_t c2=0xFFFF);
-		void clearGradH(uint16_t c1=0,uint16_t c2=0xFFFF);
 
-		void setPixel(int32_t x,int32_t y,uint16_t c=0,bool safe=true);
-		uint16_t getPixel(int32_t x,int32_t y,bool safe=true);
+
 
 		void line(int32_t x1,int32_t y1,int32_t x2,int32_t y2,uint16_t c=0);
 		void lineV(int32_t x,int32_t y,uint16_t length,uint16_t c=0);
@@ -123,15 +298,9 @@ class Graphics{
 		void lineDash(int32_t x1,int32_t y1,int32_t x2,int32_t y2,uint16_t c=0,uint8_t phase=0,uint8_t segment=10);
 		void lineEdge(int32_t x,int32_t y,uint16_t length,uint16_t width,uint16_t c=0,uint8_t direction=0);
 
-		void rectFrame(int32_t x,int32_t y,uint16_t width,uint16_t height,uint16_t c=0);
-		void rectFill(int32_t x,int32_t y,uint16_t width,uint16_t height,uint16_t c=0);
-		void rectPop(int32_t x,int32_t y,uint16_t w,uint16_t h,uint16_t c=0,uint16_t lightcolor=0xFFFF,uint16_t darkcolor=0x3333,uint16_t border=2,bool invert=false,bool flat=false);
-		void rectDither(int32_t x,int32_t y,uint16_t width,uint16_t height,uint16_t c=0,uint8_t density=15);
 		void rectProgress(int32_t x,int32_t y,uint16_t w,uint16_t h,uint16_t c=0,uint8_t value=127);
 		void rectLoad(int32_t x,int32_t y,uint16_t w,uint16_t h,uint16_t c=0,uint8_t value=4);
-		void rectGrad(int32_t x,int32_t y,uint16_t width,uint16_t height,uint16_t c1=0,uint16_t c2=0xFFFF,uint8_t angle=63);
-		void rectGradV(int32_t x,int32_t y,uint16_t width,uint16_t height,uint16_t c1=0,uint16_t c2=0xFFFF);
-		void rectGradH(int32_t x,int32_t y,uint16_t width,uint16_t height,uint16_t c1=0,uint16_t c2=0xFFFF);
+
 
 		void circFrame(int32_t x,int32_t y,uint16_t radius=10,uint16_t c=0);
 		void circFill(int32_t x,int32_t y,uint16_t radius=10,uint16_t c=0);
@@ -151,6 +320,8 @@ class Graphics{
 		void glyph(char ch,int32_t x,int32_t y,uint16_t c=0);
 		void text(const char* text,int32_t x,int32_t y,uint16_t c=0);
 
+
+
 		void setImageTone(uint16_t c=0xFFFF);
 		void setImageChannels(uint8_t r,uint8_t g,uint8_t b,uint8_t a=0);
 		void setImageChannels(uint8_t g,uint8_t a=0);
@@ -169,11 +340,10 @@ class Graphics{
 		};
 		Font fnt;
 	private:
-		#if defined(ARDUINO)
-			void raminit();
-			void businit();
-			void dspinit();
-		#endif
+		void bseinit();
+		void raminit();
+		void businit();
+		void dspinit();
 		bool
 			clipEn=false,clipVEn=false;
 		uint8_t
@@ -229,12 +399,6 @@ class Graphics{
 		}
 };
 extern Graphics gfx;
-
-class Utility{
-	public:
-		char*spacer(char*out,const char*text,uint8_t size=4,bool left=false);
-};
-extern Utility utl;
 
 class Input{
 	public:
@@ -295,369 +459,7 @@ class Moon{
 				static int acb0(lua_State*L){lua_pushboolean(L,sys.logLC);return 1;}
 				static int acb1(lua_State*L){luaL_checktype(L,1,LUA_TBOOLEAN);sys.logLC=lua_toboolean(L,1);return 0;}
 
-				static int b0(lua_State*L){gfx.flush();return 0;}
-				static int b1(lua_State*L){gfx.antiBurn();return 0;}
-				static int b2(lua_State*L){lua_pushinteger(L,gfx.getFps());return 1;}
-				static int b3(lua_State*L){
-					lua_pushinteger(L,
-						gfx.getBlend(
-							luaL_optnumber(L,1,0),
-							luaL_optnumber(L,2,0xFFFF),
-							luaL_optnumber(L,3,127)
-						)
-					);
-					return 1;
-				}
-				static int ba0(lua_State*L){lua_pushinteger(L,gfx.width);return 1;}
-				static int ba1(lua_State*L){lua_pushinteger(L,gfx.height);return 1;}
-				static int ba2(lua_State*L){lua_pushinteger(L,gfx.size);return 1;}
-				static int bba0(lua_State*L){
-					gfx.clip(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4)
-					);
-					return 0;
-				}
-				static int bba1(lua_State*L){gfx.clip();return 0;}
-				static int bbb0(lua_State*L){
-					gfx.clipView(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4)
-					);
-					return 0;
-				}
-				static int bbb1(lua_State*L){gfx.clipView();return 0;}
-				static int bc0(lua_State*L){lua_pushinteger(L,gfx.getBrightness());return 1;}
-				static int bc1(lua_State*L){gfx.setBrightness(luaL_optnumber(L,1,255));return 0;}
-				static int bd0(lua_State*L){
-					lua_pushinteger(L,gfx.getRgb565(
-						luaL_optnumber(L,1,31),
-						luaL_optnumber(L,2,63),
-						luaL_optnumber(L,3,31)
-						));
-					return 1;
-				}
-				static int bd1(lua_State*L){
-					lua_pushinteger(L,gfx.getRgb111(
-						luaL_optnumber(L,1,1),
-						luaL_optnumber(L,2,1),
-						luaL_optnumber(L,3,1)
-						));
-					return 1;
-				}
-				static int bd2(lua_State*L){
-					lua_pushinteger(L,gfx.getRgb222(
-						luaL_optnumber(L,1,3),
-						luaL_optnumber(L,2,3),
-						luaL_optnumber(L,3,3)
-						));
-					return 1;
-				}
-				static int be0(lua_State*L){lua_pushinteger(L,gfx.getPixel(luaL_checknumber(L,1),luaL_checknumber(L,2)));return 1;}
-				static int be1(lua_State*L){gfx.setPixel(luaL_checknumber(L,1),luaL_checknumber(L,2),luaL_optnumber(L,3,0));return 0;}
-				static int bf0(lua_State*L){gfx.clear(luaL_optnumber(L,1,0));return 0;}
-				static int bf1(lua_State*L){gfx.clearQuick(luaL_optnumber(L,1,0));return 0;}
-				static int bf2(lua_State*L){gfx.clearDither(luaL_optnumber(L,1,15),luaL_optnumber(L,2,255));return 0;}
-				static int bfa0(lua_State*L){gfx.clearGrad(luaL_optnumber(L,1,0),luaL_optnumber(L,2,0xFFFF),luaL_optnumber(L,3,31));return 0;}
-				static int bfa1(lua_State*L){gfx.clearGradV(luaL_optnumber(L,1,0),luaL_optnumber(L,2,0xFFFF));return 0;}
-				static int bfa2(lua_State*L){gfx.clearGradV(luaL_optnumber(L,1,0),luaL_optnumber(L,2,0xFFFF));return 0;}
-				static int bg0(lua_State*L){
-					gfx.line(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0)
-					);
-					return 0;
-				}
-				static int bg1(lua_State*L){
-					gfx.lineV(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_optnumber(L,4,0)
-					);
-					return 0;
-				}
-				static int bg2(lua_State*L){
-					gfx.lineH(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_optnumber(L,4,0)
-					);
-					return 0;
-				}
-				static int bg3(lua_State*L){
-					gfx.lineDash(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0),
-						luaL_optnumber(L,6,0),
-						luaL_optnumber(L,7,10)
-					);
-					return 0;
-				}
-				static int bg4(lua_State*L){
-					gfx.lineEdge(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0),
-						luaL_optnumber(L,6,0)
-					);
-					return 0;
-				}
-				static int bh0(lua_State*L){
-					gfx.rectFrame(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0)
-					);
-					return 0;
-				}
-				static int bh1(lua_State*L){
-					gfx.rectFill(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0)
-					);
-					return 0;
-				}
-				static int bh2(lua_State*L){
-					gfx.rectDither(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0),
-						luaL_optnumber(L,6,15)
-					);
-					return 0;
-				}
-				static int bha0(lua_State*L){
-					luaL_checktype(L,9,LUA_TBOOLEAN);
-					luaL_checktype(L,10,LUA_TBOOLEAN);
-					gfx.rectPop(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0),
-						luaL_optnumber(L,6,0xFFFF),
-						luaL_optnumber(L,7,0x3333),
-						luaL_optnumber(L,8,2),
-						lua_toboolean(L,9),
-						lua_toboolean(L,10)
-					);
-					return 0;
-				}
-				static int bha1(lua_State*L){
-					gfx.rectProgress(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0),
-						luaL_optnumber(L,6,127)
-					);
-					return 0;
-				}
-				static int bha2(lua_State*L){
-					gfx.rectLoad(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0),
-						luaL_optnumber(L,6,4)
-					);
-					return 0;
-				}
-				static int bhb0(lua_State*L){
-					gfx.rectGrad(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0),
-						luaL_optnumber(L,6,0xFFFF),
-						luaL_optnumber(L,7,31)
-					);
-					return 0;
-				}
-				static int bhb1(lua_State*L){
-					gfx.rectGradV(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0),
-						luaL_optnumber(L,6,0xFFFF)
-					);
-					return 0;
-				}
-				static int bhb2(lua_State*L){
-					gfx.rectGradH(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0),
-						luaL_optnumber(L,6,0xFFFF)
-					);
-					return 0;
-				}
-				static int bi0(lua_State*L){
-					gfx.circFrame(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_optnumber(L,4,0)
-					);
-					return 0;
-				}
-				static int bi1(lua_State*L){
-					gfx.circFill(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_optnumber(L,4,0)
-					);
-					return 0;
-				}
-				static int bj0(lua_State*L){
-					gfx.elipFrame(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0)
-					);
-					return 0;
-				}
-				static int bj1(lua_State*L){
-					gfx.elipFill(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_optnumber(L,5,0)
-					);
-					return 0;
-				}
-				static int bk0(lua_State*L){
-					gfx.triFrame(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_checknumber(L,5),
-						luaL_checknumber(L,6),
-						luaL_optnumber(L,7,0)
-					);
-					return 0;
-				}
-				static int bk1(lua_State*L){
-					gfx.triFill(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_checknumber(L,4),
-						luaL_checknumber(L,5),
-						luaL_checknumber(L,6),
-						luaL_optnumber(L,7,0)
-					);
-					return 0;
-				}
-				static int bl0(lua_State*L){lua_pushstring(L,gfx.getFont());return 1;}
-				static int bl1(lua_State*L){gfx.setFont(luaL_checkstring(L,1));return 0;}
-				static int bl2(lua_State*L){lua_pushinteger(L,gfx.fnt.index);return 1;}
-				static int bl3(lua_State*L){gfx.fnt.index=luaL_checknumber(L,1);return 0;}
-				static int bl4(lua_State*L){lua_pushinteger(L,gfx.fnt.count);return 1;}
-				static int bla0(lua_State*L){lua_pushinteger(L,gfx.getFontWidth());return 1;}
-				static int bla1(lua_State*L){lua_pushinteger(L,gfx.getFontHeight());return 1;}
-				static int bla2(lua_State*L){lua_pushinteger(L,gfx.getTextWidth(luaL_checkstring(L,1)));return 1;}
-				static int blb0(lua_State*L){
-					gfx.glyph(
-						(char)luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_optnumber(L,4,0)
-					);
-					return 0;
-				}	
-				static int blb1(lua_State*L){
-					gfx.text(
-						luaL_checkstring(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3),
-						luaL_optnumber(L,4,0)
-					);
-					return 0;
-				}
-				static int blm0(lua_State*L){
-					gfx.renderImage(
-						luaL_checknumber(L,1),
-						luaL_checknumber(L,2),
-						luaL_optnumber(L,3,0),
-						luaL_optnumber(L,4,1.0f)
-					);
-					return 0;
-				}
-				static int blm1(lua_State*L){gfx.setImageTone(luaL_optnumber(L,1,0xFFFF));return 0;}
-				static int blm2(lua_State*L){
-					gfx.setImageChannels(
-						luaL_optnumber(L,1,5),
-						luaL_optnumber(L,2,6),
-						luaL_optnumber(L,3,5),
-						luaL_optnumber(L,4,8)
-					);
-					return 0;
-				}
-				static int blm3(lua_State*L){
-					gfx.setImageChannels(
-						luaL_optnumber(L,1,6),
-						luaL_optnumber(L,2,8)
-					);
-					return 0;
-				}
-				static int blm4(lua_State*L){
-					gfx.setImageCropPosition(
-						luaL_optnumber(L,1,0),
-						luaL_optnumber(L,2,0)
-					);
-					return 0;
-				}
-				static int blm5(lua_State*L){
-					gfx.setImageCropSize(
-						luaL_optnumber(L,1,0),
-						luaL_optnumber(L,2,0)
-					);
-					return 0;
-				}
-				static int blm6(lua_State*L){
-					gfx.setImageData(
-						(const uint8_t*)luaL_checkstring(L,1),
-						luaL_checknumber(L,2),
-						luaL_checknumber(L,3)
-					);
-					return 0;
-				}
-				static int blm7(lua_State*L){lua_pushinteger(L,gfx.getImageWidth());return 1;}
-				static int blm8(lua_State*L){lua_pushinteger(L,gfx.getImageHeight());return 1;}
+
 
 				static int c0(lua_State*L){lua_pushboolean(L,inp.checkTouch());return 1;}
 				static int ca0(lua_State*L){lua_pushboolean(L,inp.touchActive);return 1;}
