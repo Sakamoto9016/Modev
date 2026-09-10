@@ -1,12 +1,5 @@
-devdefine.code-workspace
-fncmap.txt
-updateLua/update.sh
-main.code-workspace
-modev
-tree.txt
 .gitignore
-.vscode/
-devdefine/draft.txt
-docs/docs.code-workspace
-docs/draft.txt
-extra/
+/.pio
+/.vscode
+/test
+platformio.ini

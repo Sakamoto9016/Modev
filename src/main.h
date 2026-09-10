@@ -7,8 +7,10 @@ Modev has proven that these microcontroller below works:
 			Esp32c3
 			Esp32c6
 */
-#include"mcfg.h"
-#include"devdefine/main.h"
+
+#include"lib/modev/mcfg.h"
+#include"lib/devdefine/main.h"
+
 #pragma once
 	#include<cstdint>
 	#include<cstdio>
@@ -21,7 +23,7 @@ Modev has proven that these microcontroller below works:
 extern char boot[m_ScriptSize];
 extern bool err;
 extern char erno[1024];
-#if defined(ARDUINO)
+#ifdef ARDUINO
 	#include<Arduino_GFX_Library.h>
 	#include<Arduino.h>
 	#include<Wire.h>
@@ -44,6 +46,8 @@ extern char erno[1024];
 	long random(long min,long max);
 #endif
 
+#include"lib/lua/lua.hpp"
+
 void setup();
 void loop();
 
@@ -54,7 +58,7 @@ struct font{
 	const int8_t offsetX,offsetY;
 };
 
-#include"lua.hpp"
+
 
 class System{
 	public:
