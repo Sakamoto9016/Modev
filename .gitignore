@@ -1,5 +1,6 @@
 .gitignore
-/.pio
-/.vscode
+.pio
+.vscode
 /test
+src/!extra
 platformio.ini
